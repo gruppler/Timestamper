@@ -1,0 +1,17 @@
+{
+  "bitwise": false,
+  "boss": true,
+  "eqeqeq": false,
+  "indent": 2,
+  "quotmark": true,
+  "globalstrict": true,
+  "laxcomma": true,
+  "browser": true,
+  "devel": true,
+  "unused": false,
+  "predef": [
+    "require",
+    "define",
+    "saveAs"
+  ]
+}
