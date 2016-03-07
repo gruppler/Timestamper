@@ -3,12 +3,12 @@
 var version = 'v1';
 
 var manifest = [
-  '/',
-  '/css/style.css',
-  '/js/app/app.js',
-  '/js/app/session.js',
-  '/js/lib/FileSaver.js',
-  '/js/lib/minified.js'
+  '',
+  'css/style.css',
+  'js/app/app.js',
+  'js/app/session.js',
+  'js/lib/FileSaver.js',
+  'js/lib/minified.js'
 ];
 
 self.addEventListener('install', function(event){
@@ -17,10 +17,6 @@ self.addEventListener('install', function(event){
     caches
     .open(version + 'fundamentals')
     .then(function(cache){
-      /* After the cache is opened, we can fill it with the offline fundamentals.
-           The method below will add all resources we've indicated to the cache,
-           after making HTTP requests for each of them.
-        */
       return cache.addAll(manifest);
     })
     .then(function() {
