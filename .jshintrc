@@ -9,7 +9,14 @@
   "browser": true,
   "devel": true,
   "unused": false,
+  "worker": true,
   "predef": [
+    "self",
+    "caches",
+    "fetch",
+    "Response",
+    "Headers",
+    "Promise",
     "require",
     "define",
     "saveAs"
