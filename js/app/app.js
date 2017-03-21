@@ -5,21 +5,23 @@ var _=MINI._, $=MINI.$, $$=MINI.$$, EE=MINI.EE, HTML=MINI.HTML;
 var Session = require('session');
 
 var keys = {
-  onoff: 16,
-  mark: 32
+  onoff: 16,      // Shift
+  mark: 32,       // Space
+  new_group: 78,  // N
+  event_start: 69 // E
 };
 
 
-if ('serviceWorker' in navigator) {
-  console.log('CLIENT: service worker registration in progress.');
-  navigator.serviceWorker.register('/service-worker.js').then(function() {
-    console.log('CLIENT: service worker registration complete.');
-  }, function() {
-    console.log('CLIENT: service worker registration failure.');
-  });
-} else {
-  console.log('CLIENT: service worker is not supported.');
-}
+// if ('serviceWorker' in navigator) {
+//   console.log('CLIENT: service worker registration in progress.');
+//   navigator.serviceWorker.register('/service-worker.js').then(function() {
+//     console.log('CLIENT: service worker registration complete.');
+//   }, function() {
+//     console.log('CLIENT: service worker registration failure.');
+//   });
+// } else {
+//   console.log('CLIENT: service worker is not supported.');
+// }
 
 
 $(function() {
@@ -57,15 +59,24 @@ $(function() {
 
   $(window).on('keydown', function(event) {
     switch (event.which) {
-        // Start
+      // Start
       case keys.onoff:
         $sessions.fill();
         session.start();
         break;
-        // Mark
-      case keys.mark:
-        session.mark();
+      // New Group
+      case keys.new_group:
+        session.new_group(event);
         break;
+      // Event Start
+      case keys.event_start:
+        session.event_start(event);
+        break;
+      // Mark
+      case keys.mark:
+        session.mark(event);
+        break;
+      // Delete Everything
       case 8:
       case 46:
         if (session.started) {
@@ -82,8 +93,8 @@ $(function() {
           }
         }
         break;
-//      default:
-//        console.log(event.which);
+      // default:
+      //   console.log(event.which);
     }
   });
 
@@ -97,8 +108,10 @@ $(function() {
         session = new Session();
         render_sessions();
         break;
+      case keys.new_group:
+      case keys.event_start:
       case keys.mark:
-        session.mark_release();
+        session.key_release();
         break;
     }
   });
