@@ -10,53 +10,53 @@ var keys = {
 };
 
 
-if('serviceWorker' in navigator){
+if ('serviceWorker' in navigator) {
   console.log('CLIENT: service worker registration in progress.');
-  navigator.serviceWorker.register('/service-worker.js').then(function(){
+  navigator.serviceWorker.register('/service-worker.js').then(function() {
     console.log('CLIENT: service worker registration complete.');
-  }, function(){
+  }, function() {
     console.log('CLIENT: service worker registration failure.');
   });
-}else{
+} else {
   console.log('CLIENT: service worker is not supported.');
 }
 
 
-$(function(){
+$(function() {
   var $sessions = $('#sessions')
     , sessions = []
     , session, i, key, li;
 
-  function render_sessions(){
+  function render_sessions() {
     $sessions.fill();
-    for(key in sessions){
+    for (key in sessions) {
       li = EE('li', sessions[key].title);
       li.onClick(_.bind(sessions[key].download, sessions[key]));
       $sessions.addFront(li);
     }
   }
 
-  for(i = 0; i < localStorage.length; i++){
+  for (i = 0; i < localStorage.length; i++) {
     key = localStorage.key(i);
-    if(key != 'current'){
+    if (key != 'current') {
       sessions[key] = new Session(key, localStorage[key]);
     }
   }
 
-  if(localStorage.current){
+  if (localStorage.current) {
     session = sessions[localStorage.current];
-  }else{
+  } else {
     session = new Session();
   }
 
-  if(session.started){
+  if (session.started) {
     session.render();
-  }else{
+  } else {
     render_sessions();
   }
 
-  $(window).on('keydown', function(event){
-    switch(event.which){
+  $(window).on('keydown', function(event) {
+    switch (event.which) {
         // Start
       case keys.onoff:
         $sessions.fill();
@@ -68,15 +68,15 @@ $(function(){
         break;
       case 8:
       case 46:
-        if(session.started){
-          if(confirm('Delete current session?')){
+        if (session.started) {
+          if (confirm('Delete current session?')) {
             session.abort();
             delete sessions[session.started.getTime()];
             session = new Session();
             render_sessions();
           }
-        }else{
-          if(confirm('Delete all sessions?')){
+        } else {
+          if (confirm('Delete all sessions?')) {
             localStorage.clear();
             location.reload();
           }
@@ -87,11 +87,11 @@ $(function(){
     }
   });
 
-  $(window).on('keyup', function(event){
-    switch(event.which){
+  $(window).on('keyup', function(event) {
+    switch (event.which) {
       case keys.onoff:
         session.stop();
-        if(session.events.length){
+        if (session.events.length) {
           sessions[session.started.getTime()] = session;
         }
         session = new Session();

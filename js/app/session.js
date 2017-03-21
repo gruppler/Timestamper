@@ -1,6 +1,6 @@
 'use strict';
 
-define('session', function(require){
+define('session', function(require) {
   var MINI = require('minified');
   var _=MINI._, $=MINI.$, $$=MINI.$$, EE=MINI.EE, HTML=MINI.HTML;
 
@@ -9,16 +9,16 @@ define('session', function(require){
 
   var date_format = 'n d, y h:mm:ss a';
 
-  function Session(started, data){
+  function Session(started, data) {
     data = data ? JSON.parse(data) : { name: '', events: [] };
     this.started = started ? new Date(1*started) : null;
     this.name = data.name;
     this.events = data.events;
     this.mark_down = false;
 
-    if(this.started){
+    if (this.started) {
       this.title = _.formatValue(date_format, this.started);
-      if(this.name){
+      if (this.name) {
         this.title += ' - '+this.name;
       }
     }
@@ -26,22 +26,22 @@ define('session', function(require){
     return this;
   }
 
-  Session.prototype.render = function(){
+  Session.prototype.render = function() {
     var i;
 
     $start.fill(this.title);
 
     $events.fill();
-    for(i = 0; i < this.events.length; i++){
+    for (i = 0; i < this.events.length; i++) {
       this.render_mark(this.events[i]);
     }
   };
 
-  Session.prototype.render_mark = function(time){
+  Session.prototype.render_mark = function(time) {
     $events.addFront(EE('li', this.formatEvent(time)));
   };
 
-  Session.prototype.formatEvent = function(ms, i){
+  Session.prototype.formatEvent = function(ms, i) {
     ms *= 1;
     return _.formatValue('00', Math.floor(ms / 36e5) % 24) + ':' +
       _.formatValue('00', Math.floor(ms / 6e4) % 60) + ':' +
@@ -49,8 +49,8 @@ define('session', function(require){
       _.formatValue('000', ms % 1000) + (typeof(i) == 'undefined' ? '' : ' '+i);
   };
 
-  Session.prototype.start = function(){
-    if(!this.started){
+  Session.prototype.start = function() {
+    if (!this.started) {
       this.started = new Date();
       this.title = _.formatValue(date_format, this.started);
       this.render();
@@ -59,20 +59,20 @@ define('session', function(require){
     }
   };
 
-  Session.prototype.stop = function(){
+  Session.prototype.stop = function() {
     var name;
 
-    if(this.started){
+    if (this.started) {
       localStorage.current = '';
       $start.fill();
       $events.fill();
-      if(!this.events.length){
+      if (!this.events.length) {
         localStorage.removeItem(this.started.getTime());
-      }else{
+      } else {
         name = prompt('Session name:');
-        if(name !== null){
+        if (name !== null) {
           this.name = name;
-          if(this.name){
+          if (this.name) {
             this.title += ' - '+this.name;
           }
           this.save();
@@ -82,17 +82,17 @@ define('session', function(require){
     }
   };
 
-  Session.prototype.abort = function(){
+  Session.prototype.abort = function() {
     localStorage.removeItem(this.started.getTime());
     localStorage.current = '';
     $start.fill();
     $events.fill();
   };
 
-  Session.prototype.mark = function(){
+  Session.prototype.mark = function() {
     var time;
 
-    if(!this.mark_down && this.started){
+    if (!this.mark_down && this.started) {
       time = new Date() - this.started;
       this.events.push(time);
       this.save();
@@ -102,18 +102,18 @@ define('session', function(require){
     this.mark_down = true;
   };
 
-  Session.prototype.mark_release = function(){
+  Session.prototype.mark_release = function() {
     this.mark_down = false;
   };
 
-  Session.prototype.save = function(){
+  Session.prototype.save = function() {
     localStorage[this.started.getTime()] = JSON.stringify({
       name: this.name,
       events: this.events
     });
   };
 
-  Session.prototype.download = function(){
+  Session.prototype.download = function() {
     var contents = [0].concat(this.events).map(this.formatEvent).join('\r\n')
       , filename = _.formatValue('y-m-d_H-m-s', this.started) +
           (this.name ? '_'+this.name : '');
