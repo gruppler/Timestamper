@@ -26,6 +26,7 @@ define('session', function(require) {
     this.groups = data.groups;
     this.events = data.events;
     this.key_down = false;
+    this.formatEvent = this.formatEvent.bind(this);
 
     if (this.started) {
       this.title = _.formatValue(date_format, this.started);
@@ -43,24 +44,22 @@ define('session', function(require) {
     $start.fill(this.title);
 
     $events.fill();
-    for (i = this.groups[this.groups.length - 1]; i < this.events.length; i++) {
-      this.render_event(this.events[i]);
+    for (i = 0; i < this.events.length; i++) {
+      this.render_event(this.events[i], i);
     }
   };
 
-  Session.prototype.render_event = function(event) {
-    var type = event[1];
-
-    if (type == 0) {
-      $events.fill();
-    } else {
-      $events.addFront(EE('li', this.formatEvent(event)));
-    }
+  Session.prototype.render_event = function(event, i) {
+    $events.addFront(EE('li', this.formatEvent(event, i)));
   };
 
-  Session.prototype.formatEvent = function(event) {
+  Session.prototype.formatEvent = function(event, i) {
     var ms = 1*event[0]
-      , type = types[event[1]];
+      , type = types[event[1]] || 'Start';
+
+    if (!event[1] && typeof(i) == 'number') {
+      type += ' '+(this.groups.indexOf(i-1)+1);
+    }
 
     return formatEventTime(ms)+' '+type;
   };
@@ -120,7 +119,7 @@ define('session', function(require) {
       event = [time, type];
       this.events.push(event);
       this.save();
-      this.render_event(event);
+      this.render_event(event, this.events.length);
     }
   };
 
@@ -167,7 +166,7 @@ define('session', function(require) {
   };
 
   Session.prototype.download_list = function() {
-    var contents = [0].concat(this.events).map(this.formatEvent).join('\r\n')
+    var contents = [[0,-1]].concat(this.events).map(this.formatEvent).join('\r\n')
       , filename = _.formatValue('y-m-d_H-m-s', this.started) +
           (this.name ? '_'+this.name : '');
 
@@ -204,6 +203,10 @@ define('session', function(require) {
             prev_event = null;
           }
         }
+      }
+      if (prev_event) {
+        // False Negative
+        fn++;
       }
       while (row.length < 6) {
         row.push('');
