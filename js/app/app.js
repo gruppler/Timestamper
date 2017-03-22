@@ -5,6 +5,7 @@ var _=MINI._, $=MINI.$, $$=MINI.$$, EE=MINI.EE, HTML=MINI.HTML;
 var Session = require('session');
 
 var keys = {
+  clear: 88,      // X
   onoff: 16,      // Shift
   mark: 32,       // Space
   new_group: 78,  // N
@@ -77,8 +78,7 @@ $(function() {
         session.mark(event);
         break;
       // Delete Everything
-      case 8:
-      case 46:
+      case keys.clear:
         if (session.started) {
           if (confirm('Delete current session?')) {
             session.abort();
